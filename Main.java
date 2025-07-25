@@ -26,11 +26,11 @@ public class Main {
 
     private static Player findPlayer(Player playersList[], String name) {
         for (Player player : playersList) {
-            if (player.get_name().equals(name)) {
+            if (name.equals(player.get_name())) {
                 return player;
             }
         }
-        return new Player();
+        return null;
     }
 
     public static boolean containsPlayer(Player playersList[], String name) {
@@ -42,14 +42,16 @@ public class Main {
     }
 
     public static Player set_bowler(Player playersList[], String bowler) {
+        Scanner scan = new Scanner(System.in);
         boolean status = true;
         Player name = null;
         while (status) {
-            if (containsPlayer(bowling_team, bowler)) {
-                name = findPlayer(bowling_team, bowler);
+            if (containsPlayer(playersList, bowler)) {
+                name = findPlayer(playersList, bowler);
                 status = false;
             } else {
                 System.out.print("invalid player name");
+                bowler = scan.nextLine();
             }
         }
         return name;
@@ -61,29 +63,33 @@ public class Main {
         oppPlayer = temp;
     }
 
-    public static Player strike(Player batting_team[], String player) {
+    public static Player strike(Player playersList[], String player) {
+        Scanner scan = new Scanner(System.in);
         boolean status = true;
         Player name = null;
         while (status) {
-            if (containsPlayer(batting_team, player)) {
-                name = findPlayer(batting_team, player);
+            if (containsPlayer(playersList, player)) {
+                name = findPlayer(playersList, player);
                 status = false;
             } else {
-                System.out.print("invalid player name");
+                System.out.println("invalid player name");
+                player = scan.nextLine();
             }
         }
         return name;
     }
 
     public static Player non_strike(Player playersList[], String non_strike) {
+        Scanner scan = new Scanner(System.in);
         boolean status = true;
         Player name = null;
         while (status) {
-            if (containsPlayer(batting_team, non_strike)) {
-                name = findPlayer(batting_team, non_strike);
+            if (containsPlayer(playersList, non_strike)) {
+                name = findPlayer(playersList, non_strike);
                 status = false;
             } else {
-                System.out.print("invalid player name");
+                System.out.println("invalid player name");
+                non_strike = scan.nextLine();
             }
         }
         return name;
@@ -152,12 +158,15 @@ public class Main {
         int team = scan.nextInt();
         scan.nextLine(); 
 
+        innings(team);
         System.out.print("Strike : ");
         String strike = scan.nextLine();
+
+        currentPlayer = strike(batting_team, strike);
+
         System.out.print("Non Strike : ");
         String non_strike = scan.nextLine();
 
-        currentPlayer = strike(batting_team, strike);
         oppPlayer = non_strike(batting_team, non_strike);
 
         System.out.print("Bowler : ");
@@ -167,8 +176,8 @@ public class Main {
         int wickets = 0;
         int ball_count = 0;
 
-        innings(team);
         while (overs1.size() != 20 && wickets != 10) {
+            System.out.println(overs1.size()+"."+over1.size());
             if (ball_count == 6) {
                 ball_count = 0;
                 overs1.add(over1);
@@ -182,6 +191,7 @@ public class Main {
             String choice = scan.next();
             if (choice.matches("[0-6]")) {
                 over1.add(choice);
+                currentPlayer.set_balls(currentPlayer.get_balls() + 1);
                 ball_count++;
                 currentPlayer.set_runs(currentPlayer.get_runs() + Integer.valueOf(choice));
                 team_1_total += Integer.valueOf(choice);
@@ -208,9 +218,10 @@ public class Main {
                     team_1_extras++;
                 }
             }
-            System.out.println("Total : "+team_1_total);
-            System.out.println(currentPlayer.get_name()+ " "+currentPlayer.get_runs());
+            System.out.println(team_1_total+"/"+wickets);
+            System.out.println(currentPlayer.get_name()+ " "+currentPlayer.get_runs()+" "+currentPlayer.get_balls());
             System.out.println(current_bowler.get_name());
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         }
         apply_changes(team);
         if(team == 1) 
@@ -220,10 +231,11 @@ public class Main {
         innings(team);
         System.out.print("Strike : ");
         strike = scan.nextLine();
+        currentPlayer = strike(batting_team, strike);
+
         System.out.print("Non Strike : ");
         non_strike = scan.nextLine();
 
-        currentPlayer = strike(batting_team, strike);
         oppPlayer = non_strike(batting_team, non_strike);
 
         System.out.print("Bowler : ");
@@ -280,7 +292,7 @@ public class Main {
 }
 
 class Player {
-    private String name;
+    private String name = "";
     private int runs = 0;
     private int balls = 0;
     private int overs = 0;
@@ -304,12 +316,16 @@ class Player {
         return this.runs;
     }
 
+    public int get_balls() {
+        return this.balls;
+    }
+
     public void set_runs(int runs) {
         this.runs += runs;
     }
 
-    public void set_balls() {
-        this.balls++;
+    public void set_balls(int count) {
+        this.balls += count;
     }
 
     public void set_overs() {
@@ -341,3 +357,5 @@ class Player {
         this.wicketType = type;
     }
 }
+
+ 
